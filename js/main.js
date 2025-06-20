@@ -5,10 +5,20 @@
     const car = document.querySelector('.car');
     const trees = document.querySelectorAll('.tree');
     const speed = 3
-    const tree1 = trees[0]
-    const coordsTree1 = getCoords(tree1);
+    
 
-    const coords = getCoords(tree1);
+    const treesCoords = []
+
+    for (let i = 0; i < trees.length; i++) {
+      const tree = trees[i];
+      const coordsTree = getCoords(tree);
+
+      treesCoords.push(coordsTree);
+    }
+
+    console.log(treesCoords);
+
+    // const coords = getCoords(tree1);
 
     animationId = requestAnimationFrame(startGame);
     function startGame(){
@@ -19,13 +29,28 @@
     }
     
     function treesAnimation() {
-      const newCoordY = coordsTree1.y + speed;
-      coordsTree1.y = newCoordY;
-      tree1.style.transform = `translate(${coordsTree1.x}px, ${coordsTree1.y}px)`;
+      for (let i = 0; i < trees.length; i++) {
+				const tree = trees[i]
+        const coords = treesCoords[i];
+
+        console.log(tree, coords);
+
+        let newCoordY = coords.y + speed;
+
+        if (newCoordY > window.innerHeight) {
+          newCoordY = -tree.height
+        }
+
+        treesCoords[i].y = newCoordY
+
+        tree.style.transform = `translate(${coords.x}px, ${newCoordY}px)`
+			}
+
+      
     }
 
     function getCoords(element) {
-      const matrix = window.getComputedStyle(tree1).transform
+      const matrix = window.getComputedStyle(element).transform
 			const array = matrix.split(',')
       let getXCoord = parseFloat(array[array.length - 2])
 			let getYCoord = parseFloat(array[array.length - 1])
