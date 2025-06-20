@@ -5,6 +5,12 @@
     const car = document.querySelector('.car');
     const trees = document.querySelectorAll('.tree');
     const speed = 10
+
+    const carWidth = car.clientWidth
+    const carHeight = car.clientHeight
+    const road = document.querySelector('.road');
+    const roadWidth = road.clientWidth
+    const roadHeight = road.clientHeight
     
     const carCoords = getCoords(car);
     const carMoveInfo = {
@@ -24,10 +30,12 @@
     }
 
     document.addEventListener('keydown', (event) => {
+      if (isPause) {
+        return
+      }
+
       const code = event.code;
-
-
-
+      
       if (code === 'ArrowUp' && carMoveInfo.top === null) {
         carMoveInfo.top = requestAnimationFrame(carMoveToTop);
       } else if (code === 'ArrowDown' && carMoveInfo.bottom === null) {
@@ -58,6 +66,9 @@
 
     function carMoveToTop() {
       const newY = carCoords.y - speed;
+      if (newY < 0 ) {
+        return
+      }
       carCoords.y = newY;
       carMove(carCoords.x, newY);
       carMoveInfo.top = requestAnimationFrame(carMoveToTop);
@@ -65,6 +76,9 @@
 
     function carMoveToBottom() {
       const newY = carCoords.y + speed
+      if (newY > roadHeight - carHeight) {
+        return
+      }
 			carCoords.y = newY
 			carMove(carCoords.x, newY)
       carMoveInfo.bottom = requestAnimationFrame(carMoveToBottom);
@@ -72,6 +86,9 @@
 
     function carMoveToLeft() {
       const newX = carCoords.x - speed
+      if (newX < -roadWidth / 2.5) {
+        return
+      }
 			carCoords.x = newX
 			carMove(newX, carCoords.y)
       carMoveInfo.left = requestAnimationFrame(carMoveToLeft);
@@ -79,6 +96,9 @@
 
     function carMoveToRight() {
       const newX = carCoords.x + speed
+      if (newX > roadWidth / 2.5) {
+        return
+      }
 			carCoords.x = newX
 			carMove(newX, carCoords.y)
       carMoveInfo.right = requestAnimationFrame(carMoveToRight);
@@ -130,6 +150,10 @@
       isPause = !isPause;
       if(isPause) {
         cancelAnimationFrame(animationId)
+        cancelAnimationFrame(carMoveInfo.top)
+        cancelAnimationFrame(carMoveInfo.bottom)
+        cancelAnimationFrame(carMoveInfo.left)
+        cancelAnimationFrame(carMoveInfo.right)
         gameButton.children[0].style.display = 'none';
         gameButton.children[1].style.display = 'initial';
       } else {
